@@ -1,0 +1,25 @@
+<div class="row">
+  <div class="col-xs 12 col-sm-10 col-md-8 col-md-offset-2">
+    <form (ngSubmit)= "onSignup(signupForm)" #signupForm="ngForm">
+      <div class="form-group">
+        <label for="email">Mail</label>
+        <input class="form-control" type="email" id="email" name="email" ngModel required #email="ngModel">
+        <span class="help-block" *ngIf="!email.valid && email.touched">Vennligst skriv inn en gyldig email</span>
+      </div>
+      <div class="form-group">
+        <label for="password">Passord</label>
+        <input
+        class="form-control"
+        type="password"
+        id="password"
+        name="password"
+        ngModel
+        required
+        pattern="^.{6,}$">
+        <span class="help-block"></span>
+      </div>
+      <button class="btn btn-primary" type="submit" [disabled]="!signupForm.valid">Registrer deg</button>
+    </form>
+  </div>
+</div>
+
