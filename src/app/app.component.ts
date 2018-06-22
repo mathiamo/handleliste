@@ -7,11 +7,13 @@ import * as firebase from 'firebase';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+
   ngOnInit() {
     firebase.initializeApp({
       apiKey: "AIzaSyDRLyIprpY1F9x8kdd3kJGz8DAF_c8P7RE",
       authDomain: "handleliste-85749.firebaseapp.com",
     });
+
   }
 
 }

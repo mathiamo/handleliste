@@ -1,71 +1,68 @@
-import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
-import { RecipeService } from '../recipes/recipe.service';
-import { Recipe } from '../recipes/recipe.model';
-import { map } from 'rxjs/operators';
-import { ShoppingListService } from '../shopping-list/shopping-list.service';
-import { Ingredient } from './models/ingredient.model';
-import { AuthService } from '../authentication/auth.service';
+import { Injectable } from "@angular/core";
+import { RecipeService } from "../recipes/recipe.service";
+import { Recipe } from "../recipes/recipe.model";
+import { map } from "rxjs/operators";
+import { ShoppingListService } from "../shopping-list/shopping-list.service";
+import { Ingredient } from "./models/ingredient.model";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable()
 export class DataStorageService {
-  recipeUrl: string = 'https://handleliste-85749.firebaseio.com/recipes.json?auth=';
-  shoppingListurl: string = 'https://handleliste-85749.firebaseio.com/shoppinglist.json?auth=';
+  recipeUrl: string =
+    "https://handleliste-85749.firebaseio.com/recipes.json";
+  shoppingListurl: string =
+    "https://handleliste-85749.firebaseio.com/shoppinglist.json";
 
-  constructor(private http: Http,
+  constructor(
+    private httpClient: HttpClient,
     private recipeService: RecipeService,
-    private shoppingListService: ShoppingListService,
-    private authService: AuthService) {
-
-  }
+    private shoppingListService: ShoppingListService
+) {}
 
   storeRecipes() {
-    const token = this.authService.getToken();
-    return this.http.put(this.recipeUrl + token, this.recipeService.getRecipes());
+    return this.httpClient.put(
+      'https://handleliste-85749.firebaseio.com/recipes.json',
+      this.recipeService.getRecipes()
+    );
   }
   fetchRecipes() {
-    const token = this.authService.getToken();
-
-    this.http.get(this.recipeUrl + token)
-    .pipe(
-      map(
-        (response: Response) => {
-          const recipes: Recipe[] = response.json();
+    this.httpClient
+      .get<Recipe[]>(
+        this.recipeUrl
+      )
+      .pipe(
+        map(recipes => {
           for (let recipe of recipes) {
-            if (!recipe['ingredients']) {
-              console.log(recipe);
-              recipe['ingredients'] = [];
+            if (!recipe["ingredients"]) {
+              recipe["ingredients"] = [];
             }
           }
           return recipes;
-        }
-      ))
-    .subscribe(
-      (recipes: Recipe[]) => {
+        })
+      )
+      .subscribe((recipes: Recipe[]) => {
         this.recipeService.setRecipes(recipes);
-    });
+      });
   }
 
   storeShoppingList() {
-    const token = this.authService.getToken();
-    return this.http.put(this.shoppingListurl + token, this.shoppingListService.getIngredients());
+    return this.httpClient.put(
+      this.shoppingListurl,
+      this.shoppingListService.getIngredients()
+    );
   }
 
   fetchShoppingList() {
-    const token = this.authService.getToken();
-    this.http.get(this.shoppingListurl + token)
+    this.httpClient
+      .get<Ingredient[]>(this.shoppingListurl
+      )
       .pipe(
-        map(
-          (response: Response) => {
-            const shoppingList: Ingredient[] = response.json();
-            return shoppingList;
-          }
-        ))
-        .subscribe(
-          (ingredients: Ingredient[]) => {
-            this.shoppingListService.setShoppingList(ingredients);
-          }
-        );
+        map(shoppingList => {
+          return shoppingList;
+        })
+      )
+      .subscribe((ingredients: Ingredient[]) => {
+        this.shoppingListService.setShoppingList(ingredients);
+      });
   }
-
 }

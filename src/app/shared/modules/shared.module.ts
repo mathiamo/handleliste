@@ -10,9 +10,6 @@ import { CommonModule } from "@angular/common";
   exports: [
     CommonModule,
     DropdownDirective,
-
   ]
 })
-export class SharedModule {
-
-}
+export class SharedModule {}
